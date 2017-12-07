@@ -88,6 +88,7 @@ head-y			:= head$(MMUEXT).o
 obj-$(CONFIG_DEBUG_LL)	+= debug.o
 obj-$(CONFIG_EARLY_PRINTK)	+= early_printk.o
 obj-$(CONFIG_IPIPE)	+= ipipe.o
+obj-$(CONFIG_IPIPE_ARM_KUSER_TSC) += ipipe_tsc.o ipipe_tsc_asm.o
 
 obj-$(CONFIG_ARM_VIRT_EXT)	+= hyp-stub.o
 AFLAGS_hyp-stub.o		:=-Wa,-march=armv7-a
