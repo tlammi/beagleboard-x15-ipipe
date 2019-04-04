@@ -144,7 +144,8 @@ static int __init bcm2835_timer_init(struct device_node *node)
 		return -ENXIO;
 	}
 
-        if (IS_ENABLED(CONFIG_IPIPE)) {
+#ifdef CONFIG_IPIPE
+        {
                 struct resource res;
                 int ret;
 
@@ -154,6 +155,7 @@ static int __init bcm2835_timer_init(struct device_node *node)
                 t_base = base;
                 t_pbase = res.start;
         }
+#endif
 
 	ret = of_property_read_u32(node, "clock-frequency", &freq);
 	if (ret) {
@@ -193,16 +195,16 @@ static int __init bcm2835_timer_init(struct device_node *node)
 	timer->act.dev_id = timer;
 	timer->act.handler = bcm2835_time_interrupt;
 
-        if (IS_ENABLED(CONFIG_IPIPE)) {
-                bcm2835_ipipe_cs_setup(freq);
-                bcm2835_ipipe_evt_setup(&timer->evt, freq);
-                timer->evt.ipipe_timer = &bcm2835_itimer;
-                timer->evt.ipipe_timer->irq = irq;
-                timer->evt.ipipe_timer->ack = bcm2835_itimer_ack;
-                timer->evt.ipipe_timer->freq = freq;
-        } else {
-                timer->act.flags |= IRQF_SHARED;
-        }
+#ifdef CONFIG_IPIPE
+	bcm2835_ipipe_cs_setup(freq);
+	bcm2835_ipipe_evt_setup(&timer->evt, freq);
+	timer->evt.ipipe_timer = &bcm2835_itimer;
+	timer->evt.ipipe_timer->irq = irq;
+	timer->evt.ipipe_timer->ack = bcm2835_itimer_ack;
+	timer->evt.ipipe_timer->freq = freq;
+#else
+	timer->act.flags |= IRQF_SHARED;
+#endif
 
         ret = setup_irq(irq, &timer->act);
 	if (ret) {
