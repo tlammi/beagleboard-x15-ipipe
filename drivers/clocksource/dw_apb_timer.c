@@ -421,7 +421,7 @@ static struct __ipipe_tscinfo apb_tsc_info = {
  *
  * @dw_cs:	The clocksource to register.
  */
-void dw_apb_clocksource_register(struct dw_apb_clocksource *dw_cs)
+void __init dw_apb_clocksource_register(struct dw_apb_clocksource *dw_cs)
 {
 	clocksource_register_hz(&dw_cs->cs, dw_cs->timer.freq);
 #ifdef CONFIG_IPIPE
